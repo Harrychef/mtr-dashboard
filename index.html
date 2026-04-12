@@ -30,6 +30,12 @@
         .stat-number { font-size: 32px; font-weight: bold; color: #ffffff; margin: 5px 0; }
         .stat-title { color: #a4b0be; font-size: 12px; font-weight: bold; }
 
+        /* 🌟 實時影像區塊樣式 */
+        .live-video-wrapper { position: relative; width: 100%; border: 2px solid #ff4757; border-radius: 8px; overflow: hidden; background-color: #000; display: flex; justify-content: center; align-items: center; min-height: 400px; }
+        .live-video-wrapper img { width: 100%; height: auto; display: block; }
+        .live-indicator { position: absolute; top: 15px; left: 15px; background-color: rgba(255, 71, 87, 0.9); color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; letter-spacing: 1px; animation: pulse 2s infinite; z-index: 10; box-shadow: 0 0 10px rgba(255,71,87,0.5); }
+        @keyframes pulse { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+
         label { font-size: 14px; color: #a4b0be; margin-bottom: 8px; display: block; font-weight: bold; }
         select { width: 100%; padding: 12px; background-color: #2f3640; color: white; border: 1px solid #718093; border-radius: 6px; font-size: 14px; margin-bottom: 15px; outline: none; cursor: pointer; transition: 0.3s; }
         
@@ -98,6 +104,15 @@
                     <div class="stat-box zone-b"><div class="stat-title">ZONE B</div><div class="stat-number" id="zone-b-total">0</div></div>
                     <div class="stat-box zone-c"><div class="stat-title">ZONE C</div><div class="stat-number" id="zone-c-total">0</div></div>
                 </div>
+
+                <div class="card">
+                    <h2 style="margin-top: 0;">🎥 Real-Time CCTV Stream (Zone A)</h2>
+                    <div class="live-video-wrapper">
+                        <div class="live-indicator">● LIVE</div>
+                        <img id="live-stream-a" src="https://transpire-occupier-annoying.ngrok-free.dev/video_feed" alt="[Live Stream Offline - Please ensure Jetson Nano and Ngrok are running]">
+                    </div>
+                </div>
+
                 <div class="card">
                     <h2 style="margin-top: 0;">📈 Incident Trend Analysis</h2>
                     <canvas id="alarmChart"></canvas>
@@ -150,7 +165,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
     <script>
-        // 🌟 新增：時鐘自動更新邏輯
         function updateClock() {
             const now = new Date();
             const options = { timeZone: 'Asia/Taipei', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -268,7 +282,6 @@
                 if (selectedTimeRange === 'day') {
                     isTimeMatch = rowDate.toDateString() === now.toDateString();
                 } else if (selectedTimeRange === 'week') {
-                    // 🌟 修改防未來資料過濾器：放寬限制，給予一天容錯，避免電腦與雲端微小時差誤殺
                     isTimeMatch = (now - rowDate) / (1000 * 60 * 60 * 24) <= 7 && (now - rowDate) >= -86400000;
                 } else if (selectedTimeRange === 'month') {
                     isTimeMatch = rowDate.getMonth() === now.getMonth() && rowDate.getFullYear() === now.getFullYear();
